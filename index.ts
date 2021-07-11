@@ -33,11 +33,16 @@ async function getTasks(msg: discord.Message){
   msg.reply("\n"+messages.join("\n"))
 }
 
-async function setTasks(course: string, task: string, date: string, msg: discord.Message){
+async function setTask(course: string, task: string, date: string, msg: discord.Message){
   await tasksCollection.doc(`${course}.${task}`).set({
     course, task, date
   });
   msg.reply(`Created ${course}.${task}`)
+}
+
+async function deleteTask(course: string, task: string, msg: discord.Message){
+  await tasksCollection.doc(`${course}.${task}`).delete();
+  msg.reply(`Deleted ${course}.${task}`)
 }
 
 client.on('message', async (msg)=>{
@@ -72,7 +77,24 @@ client.on('message', async (msg)=>{
           }
         },
         async handler(argv){
-          await setTasks(argv.course, argv.task, argv.date as string, msg)
+          await setTask(argv.course, argv.task, argv.date as string, msg)
+        }
+      })
+      .command<{course: string, task: string}>({
+        command: 'del <course> <task>',
+        describe: 'Delete a task of a course',
+        builder: {
+          course: {
+            describe: 'Name of the course',
+            type: 'string'
+          },
+          task: {
+            describe: 'Name of the task',
+            type: 'string'
+          }
+        },
+        async handler(argv){
+          await deleteTask(argv.course, argv.task, msg)
         }
       })
       .fail((errorMsg)=>{
