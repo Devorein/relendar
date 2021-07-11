@@ -1,10 +1,11 @@
-const discord = require("discord.js");
+import discord from "discord.js";
 require('dotenv').config()
 
 const client = new discord.Client()
 
 client.on('ready', async ()=>{
-  console.log(`Logged in as ${client.user.tag}`)
+  if(client.user)
+    console.log(`Logged in as ${client.user.tag}`)
 });
 
 client.on('message', async (msg)=>{
