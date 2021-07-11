@@ -1,19 +1,19 @@
 import discord from "discord.js";
-import firebase from 'firebase/app';
+import admin from 'firebase-admin';
 require('dotenv').config()
 
-const firebaseConfig = {
-  apiKey: process.env.FIREBASE_APIKEY,
-  authDomain: `${process.env.FIREBASE_PROJECT_ID}.firebaseapp.com`,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: `${process.env.FIREBASE_PROJECT_ID}.appspot.com`,
-  messagingSenderId: process.env.FIREBASE_MESSAGE_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-}
+admin.initializeApp({
+  credential: admin.credential.cert({
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+  })
+});
+
+const db = admin.firestore();
+const tasksCollection = db.collection('tasks');
 
 const client = new discord.Client()
-const firebaseApp = firebase.initializeApp(firebaseConfig);
-console.log(firebaseApp);
 
 client.on('ready', async ()=>{
   if(client.user)
@@ -21,8 +21,13 @@ client.on('ready', async ()=>{
 });
 
 client.on('message', async (msg)=>{
-  if(msg.content === 'ping'){
-    msg.reply("pong")
+  if(msg.content.startsWith("!")){
+    const content = msg.content.slice(1);
+    const [course, task, date] = content.split(" ");
+    await tasksCollection.doc(`${course}.${task}`).set({
+      course, task, date
+    });
+    msg.reply(`Created ${course}.${task}`)
   }
 })
 
