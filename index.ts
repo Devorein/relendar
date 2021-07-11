@@ -1,10 +1,10 @@
 import { QuerySnapshot } from "@google-cloud/firestore";
-import { Command } from 'commander';
 import discord from "discord.js";
 import admin from 'firebase-admin';
+import yargsParser from 'yargs-parser';
+import Yargs from 'yargs/yargs';
 import { ITask } from "./types";
 require('dotenv').config()
-const program = new Command();
 
 admin.initializeApp({
   credential: admin.credential.cert({
@@ -44,25 +44,45 @@ client.on('message', async (msg)=>{
   const authorized = msg.member?.roles.cache.has("774226395454373928");
   const isBot = msg.author.bot;
 
-  if(authorized && !isBot){
-    if(msg.content.startsWith("!")){
-      program
-        .command('get')
-        .description("Get tasks")
-        .action(()=>getTasks(msg))
-        .command("set")
-        .description("Set a new task")
-        .argument('<course>', 'Name of the course')
-        .argument('<task>', 'Task of the course')
-        .argument('<date>', 'Last date of the task')
-        .action((course, task, date)=>setTasks(course, task, date, msg))
+  if(msg.content.startsWith("!")){
+    if(authorized && !isBot){
+      const yargs = Yargs(yargsParser(msg.content.slice(1))._)
 
-      program.parse([msg.content.slice(1)], {
-        from: 'user'
-      });
+      yargs.strict()
+      .strictCommands()
+      .exitProcess(false)
+      .command('get', 'Get tasks', (yargs) => yargs, async () => {
+        await getTasks(msg)
+      })
+      .command<{course: string, task: string, date: string}>({
+        command: 'set <course> <task> <date>',
+        describe: 'Set a new task',
+        builder: {
+          'course': {
+            describe: 'Name of the course',
+            type: 'string',
+          },
+          'task': {
+            describe: 'Task of the course',
+            type: 'string',
+          },
+          'date': {
+            describe: 'Date of the course',
+            type: 'string',
+          }
+        },
+        async handler(argv){
+          await setTasks(argv.course, argv.task, argv.date as string, msg)
+        }
+      })
+      .fail((errorMsg)=>{
+        msg.reply(`**Error: ${errorMsg}**`)
+        yargs.exit(1, new Error(errorMsg))
+      })
+      .argv
+    } else if(!isBot){
+      msg.reply(`You are not authorized. Get the Dev role first`)
     }
-  } else if(!isBot){
-    msg.reply(`You are not authorized. Get the Dev role first`)
   }
 })
 
