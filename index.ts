@@ -29,7 +29,7 @@ async function getTasks(msg: discord.Message){
   const docs = await tasksCollection.get() as QuerySnapshot<ITask>;
   const messages = docs.docs.length !== 0 ? docs.docs.map((doc, index)=>{
     const data = doc.data();
-    return `${index + 1}. **${data.course}** - ${data.task} - ${data.date}`
+    return `**\`\`\`yaml\n${index + 1}. ${data.course} ${data.task}\n${formatDate(data.date)}\n\`\`\`**`
   }) : ['No tasks added'];
   msg.reply("\n"+messages.join("\n"))
 }
