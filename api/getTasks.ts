@@ -3,7 +3,7 @@ import discord from "discord.js";
 import { ITask } from "../types";
 import { formatDate } from "../utils";
 
-export async function getTasks(msg: discord.Message, tasksCollection: FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData>){
+export async function getTasks(msg: discord.Message, tasksCollection: FirebaseFirestore.CollectionReference<ITask>){
   
   const docs = await tasksCollection.get() as QuerySnapshot<ITask>;
   const messages = docs.docs.length !== 0 ? docs.docs.map((doc, index)=>{

@@ -1,14 +1,15 @@
 import discord from "discord.js";
 import admin from 'firebase-admin';
+import { ITask } from "types";
 import yargsParser from 'yargs-parser';
 import Yargs from 'yargs/yargs';
-import { getTasks } from "./api";
-import { fillDate, formatDate, initFirebaseAdminApp } from "./utils";
+import { getTasks, setTask } from "./api";
+import { initFirebaseAdminApp } from "./utils";
 require('dotenv').config()
 initFirebaseAdminApp();
 
 const db = admin.firestore();
-const tasksCollection = db.collection('tasks');
+const tasksCollection = db.collection('tasks') as FirebaseFirestore.CollectionReference<ITask>;
 
 const client = new discord.Client()
 
@@ -16,16 +17,6 @@ client.on('ready', async ()=>{
   if(client.user)
     console.log(`Logged in as ${client.user.tag}`)
 });
-
-
-async function setTask(course: string, task: string, date: string, msg: discord.Message){
-  date = fillDate(date);
-  await tasksCollection.doc(`${course}.${task}`).set({
-    course, task, date
-  });
-  msg.reply(`**\`\`\`yaml\nCreated ${course} ${task}\nDeadline: ${formatDate(date)}\n\`\`\`**`)
-}
-
 
 async function deleteTask(course: string, task: string, msg: discord.Message){
   await tasksCollection.doc(`${course}.${task}`).delete();
@@ -70,7 +61,7 @@ client.on('message', async (msg)=>{
         },
         aliases: ['s'],
         async handler(argv){
-          await setTask(argv.course, argv.task, argv.date as string, msg)
+          await setTask(argv, msg, tasksCollection)
         }
       })
       .command<{course: string, task: string}>({
