@@ -2,9 +2,8 @@ import discord from "discord.js";
 import admin from 'firebase-admin';
 import yargsParser from 'yargs-parser';
 import Yargs from 'yargs/yargs';
-import { deleteTask } from "./api";
-import { getCommand, setCommand } from "./commands";
-import { IDeleteTaskInput, ITask } from "./types";
+import { deleteCommand, getCommand, setCommand } from "./commands";
+import { ITask } from "./types";
 import { initFirebaseAdminApp } from "./utils";
 require('dotenv').config()
 initFirebaseAdminApp();
@@ -32,24 +31,7 @@ client.on('message', async (msg)=>{
       .exitProcess(false)
       .command(getCommand(msg, tasksCollection))
       .command(setCommand(msg, tasksCollection))
-      .command<IDeleteTaskInput>({
-        command: 'del <course> <task>',
-        describe: 'Delete a task of a course',
-        builder: {
-          course: {
-            describe: 'Name of the course',
-            type: 'string'
-          },
-          task: {
-            describe: 'Name of the task',
-            type: 'string'
-          }
-        },
-        aliases: ['d'],
-        async handler(argv){
-          await deleteTask(argv, msg, tasksCollection)
-        }
-      })
+      .command(deleteCommand(msg, tasksCollection))
       .fail((errorMsg)=>{
         msg.reply(`**\n\`\`\`diff\n- ${errorMsg}\n\`\`\`**`)
         yargs.exit(1, new Error(errorMsg))
