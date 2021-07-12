@@ -2,8 +2,8 @@ import discord from "discord.js";
 import admin from 'firebase-admin';
 import yargsParser from 'yargs-parser';
 import Yargs from 'yargs/yargs';
-import { deleteTask, getTasks } from "./api";
-import { setCommand } from "./commands";
+import { deleteTask } from "./api";
+import { getCommand, setCommand } from "./commands";
 import { IDeleteTaskInput, ITask } from "./types";
 import { initFirebaseAdminApp } from "./utils";
 require('dotenv').config()
@@ -30,14 +30,7 @@ client.on('message', async (msg)=>{
       yargs.strict()
       .strictCommands()
       .exitProcess(false)
-      .command({
-        command: 'get',
-        describe: 'Get tasks', 
-        async handler (){
-          await getTasks(msg, tasksCollection)
-        },
-        aliases: ['g']
-      })
+      .command(getCommand(msg, tasksCollection))
       .command(setCommand(msg, tasksCollection))
       .command<IDeleteTaskInput>({
         command: 'del <course> <task>',
