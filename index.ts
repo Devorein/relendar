@@ -4,7 +4,7 @@ import admin from 'firebase-admin';
 import yargsParser from 'yargs-parser';
 import Yargs from 'yargs/yargs';
 import { ITask } from "./types";
-import { fillDate } from "./utils";
+import { fillDate, formatDate } from "./utils";
 require('dotenv').config()
 
 admin.initializeApp({
@@ -27,19 +27,21 @@ client.on('ready', async ()=>{
 
 async function getTasks(msg: discord.Message){
   const docs = await tasksCollection.get() as QuerySnapshot<ITask>;
-  const messages = docs.docs.map((doc, index)=>{
+  const messages = docs.docs.length !== 0 ? docs.docs.map((doc, index)=>{
     const data = doc.data();
     return `${index + 1}. **${data.course}** - ${data.task} - ${data.date}`
-  })
+  }) : ['No tasks added'];
   msg.reply("\n"+messages.join("\n"))
 }
 
 async function setTask(course: string, task: string, date: string, msg: discord.Message){
+  date = fillDate(date);
   await tasksCollection.doc(`${course}.${task}`).set({
     course, task, date
   });
-  msg.reply(`**\`\`\`yaml\nCreated ${course}.${task}\n\`\`\`**`)
+  msg.reply(`**\`\`\`yaml\nCreated ${course} ${task}\nDeadline: ${formatDate(date)}\n\`\`\`**`)
 }
+
 
 async function deleteTask(course: string, task: string, msg: discord.Message){
   await tasksCollection.doc(`${course}.${task}`).delete();
@@ -84,7 +86,7 @@ client.on('message', async (msg)=>{
         },
         aliases: ['s'],
         async handler(argv){
-          await setTask(argv.course, argv.task, fillDate(argv.date as string), msg)
+          await setTask(argv.course, argv.task, argv.date as string, msg)
         }
       })
       .command<{course: string, task: string}>({
