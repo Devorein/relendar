@@ -1,9 +1,9 @@
 import discord from "discord.js";
 import yargs, { CommandModule } from "yargs";
 import { setTask } from "../api";
-import { ITask, ITaskCreateTaskInput } from "../types";
+import { ICreateTaskInput, ITask } from "../types";
 
-export function setCommand(msg: discord.Message, tasksCollection: FirebaseFirestore.CollectionReference<ITask>): CommandModule<any, ITaskCreateTaskInput>{
+export function setCommand(msg: discord.Message, tasksCollection: FirebaseFirestore.CollectionReference<ITask>): CommandModule<any, ICreateTaskInput>{
   return {
     command: 'set <course> <task> <date>',
     describe: 'Set a new task',

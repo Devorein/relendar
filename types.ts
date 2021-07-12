@@ -4,7 +4,13 @@ export interface ITask {
   task: string
 }
 
-export interface ITaskCreateTaskInput extends ITask {
+export interface ICreateTaskInput extends ITask {
+}
+
+export interface IGetTaskInput {
+  filter?: string
+  sort?: string
+  limit?: number
 }
 
 export interface IDeleteTaskInput{
