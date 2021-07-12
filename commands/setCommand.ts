@@ -22,7 +22,7 @@ export function setCommand(msg: discord.Message, tasksCollection: FirebaseFirest
       }
     },
     aliases: ['s'],
-    async handler(argv: yargs.Arguments<ITask>){
+    async handler(argv: yargs.Arguments<ICreateTaskInput>){
       await setTask(argv, msg, tasksCollection)
     }
   }

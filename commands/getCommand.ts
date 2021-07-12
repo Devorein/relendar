@@ -17,6 +17,12 @@ export function getCommand(msg: discord.Message, tasksCollection: FirebaseFirest
         default: 'date>=today',
         describe: 'Filter the tasks',
         type: 'string'
+      }).option('sort', {
+        alias: 's',
+        demandOption: false,
+        default: 'date=ASC',
+        describe: 'Sort the tasks',
+        type: 'string'
       })
     },
     aliases: ['g']

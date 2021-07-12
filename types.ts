@@ -1,10 +1,13 @@
 export interface ITask {
   course: string
-  date: string
+  date: number
   task: string
 }
 
-export interface ICreateTaskInput extends ITask {
+export interface ICreateTaskInput {
+  course: string
+  date: string
+  task: string
 }
 
 export interface IGetTaskInput {
