@@ -1,6 +1,5 @@
 import discord from "discord.js";
 import admin from 'firebase-admin';
-import yargsParser from 'yargs-parser';
 import Yargs from 'yargs/yargs';
 import { deleteCommand, getCommand, setCommand } from "./commands";
 import { ITask } from "./types";
@@ -24,8 +23,7 @@ client.on('message', async (msg)=>{
 
   if(msg.content.startsWith("!")){
     if(authorized && !isBot){
-      const yargs = Yargs(yargsParser(msg.content.slice(1))._)
-
+      const yargs = Yargs(msg.content.slice(1).split(" "))
       yargs.strict()
       .strictCommands()
       .exitProcess(false)

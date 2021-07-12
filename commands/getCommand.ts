@@ -7,20 +7,20 @@ export function getCommand(msg: discord.Message, tasksCollection: FirebaseFirest
   return {
     command: 'get',
     describe: 'Get tasks', 
-    async handler (){
-      await getTasks(msg, tasksCollection)
+    async handler (yargs){
+      await getTasks(yargs, msg, tasksCollection)
     },
     builder(yargs){
-      return yargs.option('filter', {
-        alias: 'f',
+      return yargs.option('f', {
+        alias: 'filter',
         demandOption: false,
         default: 'date>=today',
         describe: 'Filter the tasks',
         type: 'string'
-      }).option('sort', {
-        alias: 's',
+      }).option('s', {
+        alias: 'sort',
         demandOption: false,
-        default: 'date=ASC',
+        default: 'date=0',
         describe: 'Sort the tasks',
         type: 'string'
       })

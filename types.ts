@@ -11,7 +11,9 @@ export interface ICreateTaskInput {
 }
 
 export interface IGetTaskInput {
+  f?: string
   filter?: string
+  s?: string
   sort?: string
   limit?: number
 }
