@@ -37,12 +37,12 @@ async function setTask(course: string, task: string, date: string, msg: discord.
   await tasksCollection.doc(`${course}.${task}`).set({
     course, task, date
   });
-  msg.reply(`Created ${course}.${task}`)
+  msg.reply(`**\`\`\`yaml\nCreated ${course}.${task}\n\`\`\`**`)
 }
 
 async function deleteTask(course: string, task: string, msg: discord.Message){
   await tasksCollection.doc(`${course}.${task}`).delete();
-  msg.reply(`Deleted ${course}.${task}`)
+  msg.reply(`**\`\`\`yaml\nDeleted ${course}.${task}\n\`\`\`**`)
 }
 
 client.on('message', async (msg)=>{
@@ -105,7 +105,7 @@ client.on('message', async (msg)=>{
         }
       })
       .fail((errorMsg)=>{
-        msg.reply(`**Error: ${errorMsg}**`)
+        msg.reply(`**\n\`\`\`diff\n- ${errorMsg}\n\`\`\`**`)
         yargs.exit(1, new Error(errorMsg))
       })
       .argv
