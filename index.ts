@@ -1,19 +1,11 @@
-import { QuerySnapshot } from "@google-cloud/firestore";
 import discord from "discord.js";
 import admin from 'firebase-admin';
 import yargsParser from 'yargs-parser';
 import Yargs from 'yargs/yargs';
-import { ITask } from "./types";
-import { fillDate, formatDate } from "./utils";
+import { getTasks } from "./api";
+import { fillDate, formatDate, initFirebaseAdminApp } from "./utils";
 require('dotenv').config()
-
-admin.initializeApp({
-  credential: admin.credential.cert({
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY,
-    projectId: process.env.FIREBASE_PROJECT_ID,
-  })
-});
+initFirebaseAdminApp();
 
 const db = admin.firestore();
 const tasksCollection = db.collection('tasks');
@@ -25,14 +17,6 @@ client.on('ready', async ()=>{
     console.log(`Logged in as ${client.user.tag}`)
 });
 
-async function getTasks(msg: discord.Message){
-  const docs = await tasksCollection.get() as QuerySnapshot<ITask>;
-  const messages = docs.docs.length !== 0 ? docs.docs.map((doc, index)=>{
-    const data = doc.data();
-    return `**\`\`\`yaml\n${index + 1}. ${data.course} ${data.task}\n${formatDate(data.date)}\n\`\`\`**`
-  }) : ['No tasks added'];
-  msg.reply("\n"+messages.join("\n"))
-}
 
 async function setTask(course: string, task: string, date: string, msg: discord.Message){
   date = fillDate(date);
@@ -63,7 +47,7 @@ client.on('message', async (msg)=>{
         command: 'get',
         describe: 'Get tasks', 
         async handler (){
-          await getTasks(msg)
+          await getTasks(msg, tasksCollection)
         },
         aliases: ['g']
       })
