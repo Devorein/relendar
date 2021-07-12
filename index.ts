@@ -4,6 +4,7 @@ import admin from 'firebase-admin';
 import yargsParser from 'yargs-parser';
 import Yargs from 'yargs/yargs';
 import { ITask } from "./types";
+import { fillDate } from "./utils";
 require('dotenv').config()
 
 admin.initializeApp({
@@ -83,7 +84,7 @@ client.on('message', async (msg)=>{
         },
         aliases: ['s'],
         async handler(argv){
-          await setTask(argv.course, argv.task, argv.date as string, msg)
+          await setTask(argv.course, argv.task, fillDate(argv.date as string), msg)
         }
       })
       .command<{course: string, task: string}>({
