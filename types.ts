@@ -15,7 +15,8 @@ export interface IGetTaskInput {
   filter?: string
   s?: string
   sort?: string
-  limit?: number
+  limit?: string
+  l?: string
 }
 
 export interface IDeleteTaskInput{
