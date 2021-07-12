@@ -2,9 +2,9 @@ import discord from "discord.js";
 import admin from 'firebase-admin';
 import yargsParser from 'yargs-parser';
 import Yargs from 'yargs/yargs';
-import { getTasks } from "./api";
+import { deleteTask, getTasks } from "./api";
 import { setCommand } from "./commands";
-import { ITask } from "./types";
+import { IDeleteTaskInput, ITask } from "./types";
 import { initFirebaseAdminApp } from "./utils";
 require('dotenv').config()
 initFirebaseAdminApp();
@@ -18,11 +18,6 @@ client.on('ready', async ()=>{
   if(client.user)
     console.log(`Logged in as ${client.user.tag}`)
 });
-
-async function deleteTask(course: string, task: string, msg: discord.Message){
-  await tasksCollection.doc(`${course}.${task}`).delete();
-  msg.reply(`**\`\`\`yaml\nDeleted ${course}.${task}\n\`\`\`**`)
-}
 
 client.on('message', async (msg)=>{
   const authorized = msg.member?.roles.cache.has("774226395454373928");
@@ -44,7 +39,7 @@ client.on('message', async (msg)=>{
         aliases: ['g']
       })
       .command(setCommand(msg, tasksCollection))
-      .command<{course: string, task: string}>({
+      .command<IDeleteTaskInput>({
         command: 'del <course> <task>',
         describe: 'Delete a task of a course',
         builder: {
@@ -59,7 +54,7 @@ client.on('message', async (msg)=>{
         },
         aliases: ['d'],
         async handler(argv){
-          await deleteTask(argv.course, argv.task, msg)
+          await deleteTask(argv, msg, tasksCollection)
         }
       })
       .fail((errorMsg)=>{

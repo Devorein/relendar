@@ -3,3 +3,11 @@ export interface ITask {
   date: string
   task: string
 }
+
+export interface ITaskCreateTaskInput extends ITask {
+}
+
+export interface IDeleteTaskInput{
+  course: string
+  task: string
+}
