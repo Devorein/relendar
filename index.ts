@@ -1,9 +1,10 @@
 import discord from "discord.js";
 import admin from 'firebase-admin';
-import { ITask } from "types";
 import yargsParser from 'yargs-parser';
 import Yargs from 'yargs/yargs';
-import { getTasks, setTask } from "./api";
+import { getTasks } from "./api";
+import { setCommand } from "./commands";
+import { ITask } from "./types";
 import { initFirebaseAdminApp } from "./utils";
 require('dotenv').config()
 initFirebaseAdminApp();
@@ -42,28 +43,7 @@ client.on('message', async (msg)=>{
         },
         aliases: ['g']
       })
-      .command<{course: string, task: string, date: string}>({
-        command: 'set <course> <task> <date>',
-        describe: 'Set a new task',
-        builder: {
-          'course': {
-            describe: 'Name of the course',
-            type: 'string',
-          },
-          'task': {
-            describe: 'Task of the course',
-            type: 'string',
-          },
-          'date': {
-            describe: 'Date of the course',
-            type: 'string',
-          }
-        },
-        aliases: ['s'],
-        async handler(argv){
-          await setTask(argv, msg, tasksCollection)
-        }
-      })
+      .command(setCommand(msg, tasksCollection))
       .command<{course: string, task: string}>({
         command: 'del <course> <task>',
         describe: 'Delete a task of a course',
