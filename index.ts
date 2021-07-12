@@ -56,8 +56,13 @@ client.on('message', async (msg)=>{
       yargs.strict()
       .strictCommands()
       .exitProcess(false)
-      .command('get', 'Get tasks', (yargs) => yargs, async () => {
-        await getTasks(msg)
+      .command({
+        command: 'get',
+        describe: 'Get tasks', 
+        async handler (){
+          await getTasks(msg)
+        },
+        aliases: ['g']
       })
       .command<{course: string, task: string, date: string}>({
         command: 'set <course> <task> <date>',
@@ -76,6 +81,7 @@ client.on('message', async (msg)=>{
             type: 'string',
           }
         },
+        aliases: ['s'],
         async handler(argv){
           await setTask(argv.course, argv.task, argv.date as string, msg)
         }
@@ -93,6 +99,7 @@ client.on('message', async (msg)=>{
             type: 'string'
           }
         },
+        aliases: ['d'],
         async handler(argv){
           await deleteTask(argv.course, argv.task, msg)
         }
