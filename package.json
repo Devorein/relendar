@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node ./dist/index.js",
+    "start": "dir && node ./dist/index.js",
     "build:dev": "tsc -w",
     "start:dev": "npx nodemon ./dist/index.js"
   },
