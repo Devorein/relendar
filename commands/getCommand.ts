@@ -1,31 +1,34 @@
-import discord from "discord.js";
-import { CommandModule } from "yargs";
-import { getTasks } from "../api";
-import { IGetTaskInput, ITask } from "../types";
+import discord from 'discord.js';
+import { CommandModule } from 'yargs';
+import { getTasks } from '../api';
+import { IGetTaskInput, ITask } from '../types';
 
-export function getCommand(msg: discord.Message, tasksCollection: FirebaseFirestore.CollectionReference<ITask>): CommandModule<any, IGetTaskInput>{
+export function getCommand(
+  msg: discord.Message,
+  tasksCollection: FirebaseFirestore.CollectionReference<ITask>
+): CommandModule<any, IGetTaskInput> {
   return {
     command: 'get',
-    describe: 'Get tasks', 
-    async handler (yargs){
-      await getTasks(yargs, msg, tasksCollection)
+    describe: 'Get tasks',
+    async handler(yargs) {
+      await getTasks(yargs, msg, tasksCollection);
     },
     builder: {
-      'f': {
+      f: {
         alias: 'filter',
         demandOption: false,
         default: 'date.>=.today',
         describe: 'Filter the tasks',
         type: 'string'
       },
-      's': {
+      s: {
         alias: 'sort',
         demandOption: false,
         default: 'date.0',
         describe: 'Sort the tasks',
         type: 'string'
       },
-      'l': {
+      l: {
         alias: 'limit',
         demandOption: false,
         default: null,
@@ -34,5 +37,5 @@ export function getCommand(msg: discord.Message, tasksCollection: FirebaseFirest
       }
     },
     aliases: ['g']
-  }
+  };
 }

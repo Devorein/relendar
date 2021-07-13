@@ -1,9 +1,12 @@
-import discord from "discord.js";
-import { CommandModule } from "yargs";
-import { deleteTask } from "../api";
-import { IDeleteTaskInput, ITask } from "../types";
+import discord from 'discord.js';
+import { CommandModule } from 'yargs';
+import { deleteTask } from '../api';
+import { IDeleteTaskInput, ITask } from '../types';
 
-export function deleteCommand(msg: discord.Message, tasksCollection: FirebaseFirestore.CollectionReference<ITask>): CommandModule<any, IDeleteTaskInput>{
+export function deleteCommand(
+  msg: discord.Message,
+  tasksCollection: FirebaseFirestore.CollectionReference<ITask>
+): CommandModule<any, IDeleteTaskInput> {
   return {
     command: 'del <course> <task>',
     describe: 'Delete a task of a course',
@@ -18,8 +21,8 @@ export function deleteCommand(msg: discord.Message, tasksCollection: FirebaseFir
       }
     },
     aliases: ['d'],
-    async handler(argv){
-      await deleteTask(argv, msg, tasksCollection)
+    async handler(argv) {
+      await deleteTask(argv, msg, tasksCollection);
     }
-  }
+  };
 }

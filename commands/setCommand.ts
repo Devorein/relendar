@@ -1,29 +1,32 @@
-import discord from "discord.js";
-import yargs, { CommandModule } from "yargs";
-import { setTask } from "../api";
-import { ICreateTaskInput, ITask } from "../types";
+import discord from 'discord.js';
+import yargs, { CommandModule } from 'yargs';
+import { setTask } from '../api';
+import { ICreateTaskInput, ITask } from '../types';
 
-export function setCommand(msg: discord.Message, tasksCollection: FirebaseFirestore.CollectionReference<ITask>): CommandModule<any, ICreateTaskInput>{
+export function setCommand(
+  msg: discord.Message,
+  tasksCollection: FirebaseFirestore.CollectionReference<ITask>
+): CommandModule<any, ICreateTaskInput> {
   return {
     command: 'set <course> <task> <date>',
     describe: 'Set a new task',
     builder: {
-      'course': {
+      course: {
         describe: 'Name of the course',
-        type: 'string',
+        type: 'string'
       },
-      'task': {
+      task: {
         describe: 'Task of the course',
-        type: 'string',
+        type: 'string'
       },
-      'date': {
+      date: {
         describe: 'Date of the course',
-        type: 'string',
+        type: 'string'
       }
     },
     aliases: ['s'],
-    async handler(argv: yargs.Arguments<ICreateTaskInput>){
-      await setTask(argv, msg, tasksCollection)
+    async handler(argv: yargs.Arguments<ICreateTaskInput>) {
+      await setTask(argv, msg, tasksCollection);
     }
-  }
+  };
 }
