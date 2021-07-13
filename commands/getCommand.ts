@@ -14,7 +14,7 @@ export function getCommand(msg: discord.Message, tasksCollection: FirebaseFirest
       'f': {
         alias: 'filter',
         demandOption: false,
-        default: 'date>=today',
+        default: 'date.>=.today',
         describe: 'Filter the tasks',
         type: 'string'
       },
