@@ -1,7 +1,7 @@
 {
-  "name": "relendar",
+  "name": "relendar-mongodb",
   "version": "1.0.0",
-  "description": "",
+  "description": "A discord bot to help you keep track of your academic schedule.",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
@@ -15,8 +15,8 @@
   "dependencies": {
     "discord.js": "^12.5.3",
     "dotenv": "^10.0.0",
-    "firebase-admin": "^9.10.0",
     "moment": "^2.29.1",
+    "mongodb": "^4.0.0",
     "yargs": "^16.2.0"
   },
   "devDependencies": {
