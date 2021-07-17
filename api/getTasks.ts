@@ -27,29 +27,47 @@ export async function getTasks(
 
   const queryFilter: Filter<ITask> = {};
 
-  if (leftOperand === 'date' && operator && rightOperand) {
-    let comparator: string | number = rightOperand;
-    if (rightOperand === 'today') {
+  let queryFilterOperator = '$gte',
+    comparator: string | number = rightOperand;
+
+  switch (operator) {
+    case '>=': {
+      queryFilterOperator = '$gte';
+      break;
+    }
+    case '>': {
+      queryFilterOperator = '$gt';
+      break;
+    }
+    case '<=': {
+      queryFilterOperator = '$lte';
+      break;
+    }
+    case '<': {
+      queryFilterOperator = '$lt';
+      break;
+    }
+    case '==': {
+      queryFilterOperator = '$eq';
+      break;
+    }
+  }
+
+  if (leftOperand === 'date' && rightOperand) {
+    if (rightOperand === 'td') {
       comparator = Date.now();
-    } else if (rightOperand === 'tomorrow') {
+    } else if (rightOperand === 'tm') {
       comparator = moment(new Date(), 'YYYY-MM-DD').add(1, 'days').valueOf();
+    } else if (rightOperand === 'ys') {
+      comparator = moment(new Date(), 'YYYY-MM-DD')
+        .subtract(1, 'days')
+        .valueOf();
     } else {
       comparator = addRelativeDates(rightOperand).valueOf();
     }
-    let queryFilterOperator = '$gte';
-    if (operator === '>=') {
-      queryFilterOperator = '$gte';
-    } else if (operator === '<=') {
-      queryFilterOperator = '$lte';
-    } else if (operator === '<') {
-      queryFilterOperator = '$lt';
-    } else if (operator === '>') {
-      queryFilterOperator = '$gt';
-    } else if (operator === '==') {
-      queryFilterOperator = '$eq';
-    }
-    queryFilter[leftOperand] = { [queryFilterOperator]: comparator };
   }
+
+  queryFilter[leftOperand] = { [queryFilterOperator]: comparator };
 
   try {
     const docs = await tasksCollection
@@ -65,9 +83,7 @@ export async function getTasks(
               new Date(doc.date).toISOString()
             )}\n\`\`\`**`;
           })
-        : [
-            'Server: Heroku, Database: Mongodb\n**```diff\n- No tasks added\n```**'
-          ];
+        : ['**```diff\n- No tasks returned\n```**'];
     msg.reply('Server: Heroku, Database: Mongodb\n' + messages.join('\n'));
   } catch (err) {
     msg.reply([
