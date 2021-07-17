@@ -18,7 +18,7 @@ export function getCommand(
       f: {
         alias: 'filter',
         demandOption: false,
-        default: 'date.>=.today',
+        default: 'date.>=.td',
         describe: 'Filter the tasks',
         type: 'string'
       },

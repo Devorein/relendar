@@ -10,9 +10,9 @@ export async function getTasks(
   msg: discord.Message,
   tasksCollection: Collection<ITask>
 ) {
-  const { limit = null, sort = 'date.1', filter = 'date.>=.today' } = data;
+  const { limit = null, sort = 'date.1', filter = 'date.>=.td' } = data;
   const [sortField = 'date', sortOrder = '1'] = sort.split('.');
-  const [leftOperand = 'date', operator = '>=', rightOperand = 'today'] =
+  const [leftOperand = 'date', operator = '>=', rightOperand = 'td'] =
     filter.split('.');
 
   const queryOptions: FindOptions<ITask> = {
@@ -20,7 +20,6 @@ export async function getTasks(
       [sortField]: parseInt(sortOrder) as SortDirection
     }
   };
-
   if (limit) {
     queryOptions.limit = parseInt(limit);
   }
@@ -67,7 +66,10 @@ export async function getTasks(
     }
   }
 
-  queryFilter[leftOperand] = { [queryFilterOperator]: comparator };
+  queryFilter[leftOperand] = {
+    [queryFilterOperator]: new Date(comparator).getTime()
+  };
+  console.log(queryFilter, queryOptions);
 
   try {
     const docs = await tasksCollection

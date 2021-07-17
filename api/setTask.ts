@@ -10,6 +10,7 @@ export async function setTask(
 ) {
   const { course, date, task } = data;
   const filledDate = fillDate(date);
+  console.log(filledDate);
   await tasksCollection.insertOne({
     course,
     task,

@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { addRelativeDates } from './';
 
 export function fillDate(dateStr: string) {
@@ -15,7 +14,5 @@ export function fillDate(dateStr: string) {
     return `${year ?? currentYear}-${month ?? currentMonth}-${date}T${
       hour ?? currentHour
     }:${minute ?? currentMinute}:${second ?? currentSecond}`;
-  } else {
-    return moment(addRelativeDates(dateStr)).format('YYYY-MM-DD');
-  }
+  } else return addRelativeDates(dateStr);
 }

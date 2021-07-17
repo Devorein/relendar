@@ -23,10 +23,11 @@ async function main() {
 
     if (msg.content.startsWith('!rl')) {
       if (!isBot) {
-        const authorizedRole = msg.member!.roles.cache.find(
-          (role) => role.name === process.env.DISCORD_AUTHORIZED_ROLE
+        const authorizedRoles = process.env.DISCORD_AUTHORIZED_ROLE!.split(',');
+        const isAuthorized = msg.member!.roles.cache.find((role) =>
+          authorizedRoles.includes(role.name)
         );
-        if (authorizedRole) {
+        if (isAuthorized) {
           const yargs = Yargs(msg.content.slice(4).split(' '));
           yargs
             .strict()
