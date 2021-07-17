@@ -65,9 +65,13 @@ export async function getTasks(
               new Date(doc.date).toISOString()
             )}\n\`\`\`**`;
           })
-        : ['**```diff\n- No tasks added\n```**'];
-    msg.reply('\n' + messages.join('\n'));
+        : [
+            'Server: Heroku, Database: Mongodb\n**```diff\n- No tasks added\n```**'
+          ];
+    msg.reply('Server: Heroku, Database: Mongodb\n' + messages.join('\n'));
   } catch (err) {
-    msg.reply([`**\`\`\`diff\n- ${err.message}\n\`\`\`**`]);
+    msg.reply([
+      `Server: Heroku, Database: Mongodb\n**\`\`\`diff\n- ${err.message}\n\`\`\`**`
+    ]);
   }
 }

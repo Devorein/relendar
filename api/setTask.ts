@@ -16,7 +16,7 @@ export async function setTask(
     date: new Date(filledDate).getTime()
   });
   msg.reply(
-    `**\`\`\`yaml\nCreated ${course} ${task}\nDeadline: ${formatDate(
+    `Server: Heroku, Database: Mongodb\n**\`\`\`yaml\nCreated ${course} ${task}\nDeadline: ${formatDate(
       filledDate
     )}\n\`\`\`**`
   );

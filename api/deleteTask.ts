@@ -9,5 +9,7 @@ export async function deleteTask(
 ) {
   const { course, task } = data;
   await tasksCollection.deleteOne({ course, task });
-  msg.reply(`**\`\`\`yaml\nDeleted ${course}.${task}\n\`\`\`**`);
+  msg.reply(
+    `Server: Heroku, Database: Mongodb\n**\`\`\`yaml\nDeleted ${course}.${task}\n\`\`\`**`
+  );
 }

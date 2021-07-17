@@ -19,25 +19,31 @@ async function main() {
   });
 
   discordClient.on('message', async (msg) => {
-    const authorized = msg.member?.roles.cache.has('774226395454373928');
     const isBot = msg.author.bot;
 
     if (msg.content.startsWith('!rl')) {
-      if (authorized && !isBot) {
-        const yargs = Yargs(msg.content.slice(4).split(' '));
-        yargs
-          .strict()
-          .strictCommands()
-          .exitProcess(false)
-          .command(getCommand(msg, tasksCollection))
-          .command(setCommand(msg, tasksCollection))
-          .command(deleteCommand(msg, tasksCollection))
-          .fail((errorMsg) => {
-            msg.reply(`**\n\`\`\`diff\n- ${errorMsg}\n\`\`\`**`);
-            yargs.exit(1, new Error(errorMsg));
-          }).argv;
-      } else if (!isBot) {
-        msg.reply(`You are not authorized. Get the Dev role first`);
+      if (!isBot) {
+        const authorizedRole = msg.member!.roles.cache.find(
+          (role) => role.name === process.env.DISCORD_AUTHORIZED_ROLE
+        );
+        if (authorizedRole) {
+          const yargs = Yargs(msg.content.slice(4).split(' '));
+          yargs
+            .strict()
+            .strictCommands()
+            .exitProcess(false)
+            .command(getCommand(msg, tasksCollection))
+            .command(setCommand(msg, tasksCollection))
+            .command(deleteCommand(msg, tasksCollection))
+            .fail((errorMsg) => {
+              msg.reply(`**\n\`\`\`diff\n- ${errorMsg}\n\`\`\`**`);
+              yargs.exit(1, new Error(errorMsg));
+            }).argv;
+        } else {
+          msg.reply(
+            `You are not authorized. Get the ${process.env.DISCORD_AUTHORIZED_ROLE} role first`
+          );
+        }
       }
     }
   });
