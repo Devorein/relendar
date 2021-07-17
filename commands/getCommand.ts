@@ -25,7 +25,7 @@ export function getCommand(
       s: {
         alias: 'sort',
         demandOption: false,
-        default: 'date.0',
+        default: 'date.1',
         describe: 'Sort the tasks',
         type: 'string'
       },

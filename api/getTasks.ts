@@ -36,7 +36,19 @@ export async function getTasks(
     } else {
       comparator = addRelativeDates(rightOperand).valueOf();
     }
-    queryFilter[leftOperand] = { $geq: comparator };
+    let queryFilterOperator = '$gte';
+    if (operator === '>=') {
+      queryFilterOperator = '$gte';
+    } else if (operator === '<=') {
+      queryFilterOperator = '$lte';
+    } else if (operator === '<') {
+      queryFilterOperator = '$lt';
+    } else if (operator === '>') {
+      queryFilterOperator = '$gt';
+    } else if (operator === '==') {
+      queryFilterOperator = '$eq';
+    }
+    queryFilter[leftOperand] = { [queryFilterOperator]: comparator };
   }
 
   try {

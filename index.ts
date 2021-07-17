@@ -6,9 +6,10 @@ import { createMongodbClient } from './utils';
 require('dotenv').config();
 
 const discordClient = new discord.Client();
-const mongoClient = createMongodbClient();
+let mongoClient = createMongodbClient();
 
 async function main() {
+  mongoClient = await mongoClient.connect();
   const database = mongoClient.db(process.env.MONGODB_DATABASE);
   const tasksCollection = database.collection<ITask>('tasks');
 
@@ -21,9 +22,9 @@ async function main() {
     const authorized = msg.member?.roles.cache.has('774226395454373928');
     const isBot = msg.author.bot;
 
-    if (msg.content.startsWith('!')) {
+    if (msg.content.startsWith('!rl')) {
       if (authorized && !isBot) {
-        const yargs = Yargs(msg.content.slice(1).split(' '));
+        const yargs = Yargs(msg.content.slice(4).split(' '));
         yargs
           .strict()
           .strictCommands()

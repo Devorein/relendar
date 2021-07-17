@@ -1,11 +1,12 @@
 import discord from 'discord.js';
+import { Collection } from 'mongodb';
 import { CommandModule } from 'yargs';
 import { deleteTask } from '../api';
 import { IDeleteTaskInput, ITask } from '../types';
 
 export function deleteCommand(
   msg: discord.Message,
-  tasksCollection: FirebaseFirestore.CollectionReference<ITask>
+  tasksCollection: Collection<ITask>
 ): CommandModule<any, IDeleteTaskInput> {
   return {
     command: 'del <course> <task>',
