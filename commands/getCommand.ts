@@ -1,11 +1,12 @@
 import discord from 'discord.js';
+import { Collection } from 'mongodb';
 import { CommandModule } from 'yargs';
 import { getTasks } from '../api';
 import { IGetTaskInput, ITask } from '../types';
 
 export function getCommand(
   msg: discord.Message,
-  tasksCollection: FirebaseFirestore.CollectionReference<ITask>
+  tasksCollection: Collection<ITask>
 ): CommandModule<any, IGetTaskInput> {
   return {
     command: 'get',

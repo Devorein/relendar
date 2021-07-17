@@ -1,6 +1,6 @@
-import { QuerySnapshot, WhereFilterOp } from '@google-cloud/firestore';
 import discord from 'discord.js';
 import moment from 'moment';
+import { Collection, Filter, FindOptions, SortDirection } from 'mongodb';
 import yargs from 'yargs';
 import { IGetTaskInput, ITask } from '../types';
 import { addRelativeDates, formatDate } from '../utils';
@@ -8,15 +8,25 @@ import { addRelativeDates, formatDate } from '../utils';
 export async function getTasks(
   data: yargs.Arguments<IGetTaskInput>,
   msg: discord.Message,
-  tasksCollection: FirebaseFirestore.CollectionReference<ITask>
+  tasksCollection: Collection<ITask>
 ) {
-  const { limit = null, sort = 'date.0', filter = 'date.>=.today' } = data;
-  const [sortField, sortOrder = '0'] = sort.split('.');
-  const [leftOperand, operator, rightOperand] = filter.split('.');
-  let query: FirebaseFirestore.Query<ITask> = tasksCollection.orderBy(
-    sortField,
-    sortOrder === '0' ? 'asc' : ('desc' as FirebaseFirestore.OrderByDirection)
-  );
+  const { limit = null, sort = 'date.1', filter = 'date.>=.today' } = data;
+  const [sortField = 'date', sortOrder = '1'] = sort.split('.');
+  const [leftOperand = 'date', operator = '>=', rightOperand = 'today'] =
+    filter.split('.');
+
+  const queryOptions: FindOptions<ITask> = {
+    sort: {
+      [sortField]: parseInt(sortOrder) as SortDirection
+    }
+  };
+
+  if (limit) {
+    queryOptions.limit = parseInt(limit);
+  }
+
+  const queryFilter: Filter<ITask> = {};
+
   if (leftOperand === 'date' && operator && rightOperand) {
     let comparator: string | number = rightOperand;
     if (rightOperand === 'today') {
@@ -26,21 +36,21 @@ export async function getTasks(
     } else {
       comparator = addRelativeDates(rightOperand).valueOf();
     }
-    query = query.where(leftOperand, operator as WhereFilterOp, comparator);
+    queryFilter[leftOperand] = { $geq: comparator };
   }
-  if (limit) {
-    query = query.limit(parseInt(limit));
-  }
+
   try {
-    const docs = (await query.get()) as QuerySnapshot<ITask>;
+    const docs = await tasksCollection
+      .find(queryFilter, queryOptions)
+      .toArray();
+
     const messages =
-      docs.docs.length !== 0
-        ? docs.docs.map((doc, index) => {
-            const data = doc.data();
-            return `**\`\`\`yaml\n${index + 1}. ${data.course} ${
-              data.task
-            }\n${moment(new Date(data.date)).fromNow()}\n${formatDate(
-              new Date(data.date).toISOString()
+      docs.length !== 0
+        ? docs.map((doc, index) => {
+            return `**\`\`\`yaml\n${index + 1}. ${doc.course} ${
+              doc.task
+            }\n${moment(new Date(doc.date)).fromNow()}\n${formatDate(
+              new Date(doc.date).toISOString()
             )}\n\`\`\`**`;
           })
         : ['**```diff\n- No tasks added\n```**'];
