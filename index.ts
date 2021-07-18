@@ -1,9 +1,9 @@
+require('dotenv').config();
 import discord from 'discord.js';
 import Yargs from 'yargs/yargs';
 import { deleteCommand, getCommand, setCommand } from './commands';
 import { ITask } from './types';
 import { createMongodbClient } from './utils';
-require('dotenv').config();
 
 const discordClient = new discord.Client();
 let mongoClient = createMongodbClient();

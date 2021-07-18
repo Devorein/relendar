@@ -1,6 +1,7 @@
 import discord from 'discord.js';
 import { Collection } from 'mongodb';
 import { ICreateTaskInput, ITask } from 'types';
+import { CONFIG_INFO } from '../constants';
 import { fillDate, formatDate, generateExtraTasks } from '../utils';
 
 export async function setTask(
@@ -29,11 +30,9 @@ export async function setTask(
     ];
     await tasksCollection.insertMany([...tasks, ...extraTasks]);
     msg.reply(
-      `Server: Heroku, Database: Mongodb\n**${messages
-        .concat(extraMessages)
-        .join('\n')}**`
+      `${CONFIG_INFO}\n**${messages.concat(extraMessages).join('\n')}**`
     );
   } catch (err) {
-    msg.reply(`\`\`\`diff\n- ${err.message}\n\`\`\``);
+    msg.reply(`${CONFIG_INFO}\n**\`\`\`diff\n- ${err.message}\n\`\`\`**`);
   }
 }

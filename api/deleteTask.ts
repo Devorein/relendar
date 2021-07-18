@@ -1,5 +1,6 @@
 import discord from 'discord.js';
 import { Collection } from 'mongodb';
+import { CONFIG_INFO } from '../constants';
 import { IDeleteTaskInput, ITask } from '../types';
 
 export async function deleteTask(
@@ -10,6 +11,6 @@ export async function deleteTask(
   const { course, task } = data;
   await tasksCollection.deleteOne({ course, task });
   msg.reply(
-    `Server: Heroku, Database: Mongodb\n**\`\`\`yaml\nDeleted ${course}.${task}\n\`\`\`**`
+    `${CONFIG_INFO}\n**\`\`\`yaml\nDeleted ${course}.${task}\n\`\`\`**`
   );
 }
