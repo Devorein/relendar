@@ -4,7 +4,12 @@ import { Collection, Filter, FindOptions, SortDirection } from 'mongodb';
 import yargs from 'yargs';
 import { CONFIG_INFO } from '../constants';
 import { IGetTaskInput, ITask } from '../types';
-import { addRelativeDates, formatDate, generateErrorMessage } from '../utils';
+import {
+  addRelativeDates,
+  formatDate,
+  generateErrorMessage,
+  generateQueryFieldOperator
+} from '../utils';
 
 export async function getTasks(
   data: yargs.Arguments<IGetTaskInput>,
@@ -27,31 +32,7 @@ export async function getTasks(
 
   const queryFilter: Filter<ITask> = {};
 
-  let queryFilterOperator = '$gte',
-    comparator: string | number = rightOperand;
-
-  switch (operator) {
-    case '>=': {
-      queryFilterOperator = '$gte';
-      break;
-    }
-    case '>': {
-      queryFilterOperator = '$gt';
-      break;
-    }
-    case '<=': {
-      queryFilterOperator = '$lte';
-      break;
-    }
-    case '<': {
-      queryFilterOperator = '$lt';
-      break;
-    }
-    case '==': {
-      queryFilterOperator = '$eq';
-      break;
-    }
-  }
+  let comparator: string | number = rightOperand;
 
   if (leftOperand === 'date' && rightOperand) {
     if (rightOperand === 'td') {
@@ -67,11 +48,10 @@ export async function getTasks(
     }
   }
 
-  queryFilter[leftOperand] = {
-    [queryFilterOperator]: new Date(comparator).getTime()
-  };
-
   try {
+    queryFilter[leftOperand] = {
+      [generateQueryFieldOperator(operator)]: new Date(comparator).getTime()
+    };
     const docs = await tasksCollection
       .find(queryFilter, queryOptions)
       .toArray();

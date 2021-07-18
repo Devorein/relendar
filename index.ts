@@ -3,7 +3,11 @@ import discord from 'discord.js';
 import Yargs from 'yargs/yargs';
 import { deleteCommand, getCommand, setCommand } from './commands';
 import { ITask } from './types';
-import { createMongodbClient, generateSplitInput } from './utils';
+import {
+  createMongodbClient,
+  generateErrorMessage,
+  generateSplitInput
+} from './utils';
 
 const discordClient = new discord.Client();
 let mongoClient = createMongodbClient();
@@ -37,12 +41,14 @@ async function main() {
             .command(setCommand(msg, tasksCollection))
             .command(deleteCommand(msg, tasksCollection))
             .fail((errorMsg) => {
-              msg.reply(`**\n\`\`\`diff\n- ${errorMsg}\n\`\`\`**`);
+              msg.reply(generateErrorMessage(errorMsg));
               yargs.exit(1, new Error(errorMsg));
             }).argv;
         } else {
           msg.reply(
-            `You are not authorized. Get the ${process.env.DISCORD_AUTHORIZED_ROLE} role first`
+            generateErrorMessage(
+              `You are not authorized. Get the ${process.env.DISCORD_AUTHORIZED_ROLE} role first`
+            )
           );
         }
       }
