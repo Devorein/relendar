@@ -8,17 +8,25 @@ export async function setTask(
   msg: discord.Message,
   tasksCollection: Collection<ITask>
 ) {
-  const { course, date, task } = data;
+  const { course, date, task, extra } = data;
   const filledDate = fillDate(date);
-  console.log(filledDate);
-  await tasksCollection.insertOne({
-    course,
-    task,
-    date: new Date(filledDate).getTime()
-  });
-  msg.reply(
-    `Server: Heroku, Database: Mongodb\n**\`\`\`yaml\nCreated ${course} ${task}\nDeadline: ${formatDate(
+  const tasks: ITask[] = [
+    {
+      course,
+      date: new Date(filledDate).getTime(),
+      task
+    }
+  ];
+  const messages: string[] = [
+    `\`\`\`yaml\nCreated ${course} ${task}\nDeadline: ${formatDate(
       filledDate
-    )}\n\`\`\`**`
-  );
+    )}\n\`\`\``
+  ];
+
+  try {
+    await tasksCollection.insertMany(tasks);
+    msg.reply(`Server: Heroku, Database: Mongodb\n**${messages.join('\n')}**`);
+  } catch (err) {
+    msg.reply(`\`\`\`diff\n- ${err.message}\n\`\`\``);
+  }
 }

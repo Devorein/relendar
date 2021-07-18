@@ -69,7 +69,6 @@ export async function getTasks(
   queryFilter[leftOperand] = {
     [queryFilterOperator]: new Date(comparator).getTime()
   };
-  console.log(queryFilter, queryOptions);
 
   try {
     const docs = await tasksCollection

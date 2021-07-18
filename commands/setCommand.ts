@@ -9,7 +9,7 @@ export function setCommand(
   tasksCollection: Collection<ITask>
 ): CommandModule<any, ICreateTaskInput> {
   return {
-    command: 'set <course> <task> <date>',
+    command: 'set <course> <task> <date> [extra..]',
     describe: 'Set a new task',
     builder: {
       course: {
