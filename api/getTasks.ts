@@ -4,7 +4,7 @@ import { Collection, Filter, FindOptions, SortDirection } from 'mongodb';
 import yargs from 'yargs';
 import { CONFIG_INFO } from '../constants';
 import { IGetTaskInput, ITask } from '../types';
-import { addRelativeDates, formatDate } from '../utils';
+import { addRelativeDates, formatDate, generateErrorMessage } from '../utils';
 
 export async function getTasks(
   data: yargs.Arguments<IGetTaskInput>,
@@ -85,9 +85,9 @@ export async function getTasks(
               new Date(doc.date).toISOString()
             )}\n\`\`\`**`;
           })
-        : ['${CONFIG_INFO}\n**```diff\n- No tasks returned\n```**'];
+        : [generateErrorMessage('No tasks returned')];
     msg.reply(CONFIG_INFO + '\n' + messages.join('\n'));
   } catch (err) {
-    msg.reply(`${CONFIG_INFO}\n**\`\`\`diff\n- ${err.message}\n\`\`\`**`);
+    msg.reply(generateErrorMessage(err.message));
   }
 }
