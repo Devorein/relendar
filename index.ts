@@ -3,7 +3,7 @@ import discord from 'discord.js';
 import Yargs from 'yargs/yargs';
 import { deleteCommand, getCommand, setCommand } from './commands';
 import { ITask } from './types';
-import { createMongodbClient } from './utils';
+import { createMongodbClient, generateSplitInput } from './utils';
 
 const discordClient = new discord.Client();
 let mongoClient = createMongodbClient();
@@ -28,7 +28,7 @@ async function main() {
           authorizedRoles.includes(role.name)
         );
         if (isAuthorized) {
-          const yargs = Yargs(msg.content.slice(4).split(' '));
+          const yargs = Yargs(generateSplitInput(msg.content.slice(4)));
           yargs
             .strict()
             .strictCommands()

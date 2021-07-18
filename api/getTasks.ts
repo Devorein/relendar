@@ -78,15 +78,18 @@ export async function getTasks(
 
     const messages =
       docs.length !== 0
-        ? docs.map((doc, index) => {
-            return `**\`\`\`yaml\n${index + 1}. ${doc.course} ${
-              doc.task
-            }\n${moment(new Date(doc.date)).fromNow()}\n${formatDate(
-              new Date(doc.date).toISOString()
-            )}\n\`\`\`**`;
-          })
+        ? [
+            CONFIG_INFO,
+            ...docs.map((doc, index) => {
+              return `**\`\`\`yaml\n${index + 1}. ${doc.course} ${
+                doc.task
+              }\n${moment(new Date(doc.date)).fromNow()}\n${formatDate(
+                new Date(doc.date).toISOString()
+              )}\n\`\`\`**`;
+            })
+          ]
         : [generateErrorMessage('No tasks returned')];
-    msg.reply(CONFIG_INFO + '\n' + messages.join('\n'));
+    msg.reply(messages.join('\n'));
   } catch (err) {
     msg.reply(generateErrorMessage(err.message));
   }
