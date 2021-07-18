@@ -1,7 +1,8 @@
+import moment from 'moment';
 import { addRelativeDates } from './';
 
 export function fillDate(dateStr: string) {
-  if (dateStr.includes('-')) {
+  if (dateStr.match(/(T|-|:)/)) {
     const [dateChunk, timeChunk] = dateStr.split('T');
     const [date, month, year] = dateChunk.split('-');
     const [hour, minute, second] = timeChunk.split(':');
@@ -11,8 +12,11 @@ export function fillDate(dateStr: string) {
       currentHour = currentDate.getHours(),
       currentMinute = currentDate.getMinutes(),
       currentSecond = currentDate.getSeconds();
-    return `${year ?? currentYear}-${month ?? currentMonth}-${date}T${
-      hour ?? currentHour
-    }:${minute ?? currentMinute}:${second ?? currentSecond}`;
+    return moment(
+      `${year ?? currentYear}/${month ?? currentMonth}/${date} ${
+        hour ?? currentHour
+      }:${minute ?? currentMinute}:${second ?? currentSecond}`,
+      'YYYY/M/D h:m:s'
+    ).format('YYYY-MM-DDTHH:mm:ss');
   } else return addRelativeDates(dateStr);
 }
