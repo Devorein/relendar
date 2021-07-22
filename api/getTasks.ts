@@ -53,7 +53,6 @@ export async function getTasks(
     queryFilter[leftOperand] = {
       [generateQueryFieldOperator(operator)]: comparator
     };
-    console.log(queryFilter);
     const docs = await tasksCollection
       .find(queryFilter, queryOptions)
       .toArray();

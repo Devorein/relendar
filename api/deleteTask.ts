@@ -9,8 +9,8 @@ export async function deleteTask(
   tasksCollection: Collection<ITask>
 ) {
   const { course, task } = data;
-  await tasksCollection.deleteOne({ course, task });
+  const { deletedCount } = await tasksCollection.deleteMany({ course, task });
   msg.reply(
-    `${CONFIG_INFO}\n**\`\`\`yaml\nDeleted ${course}.${task}\n\`\`\`**`
+    `${CONFIG_INFO}\n**\`\`\`yaml\nDeleted ${deletedCount} tasks\n\`\`\`**`
   );
 }
