@@ -46,12 +46,14 @@ export async function getTasks(
     } else {
       comparator = addRelativeDates(rightOperand).valueOf();
     }
+    comparator = new Date(comparator).getTime();
   }
 
   try {
     queryFilter[leftOperand] = {
-      [generateQueryFieldOperator(operator)]: new Date(comparator).getTime()
+      [generateQueryFieldOperator(operator)]: comparator
     };
+    console.log(queryFilter);
     const docs = await tasksCollection
       .find(queryFilter, queryOptions)
       .toArray();
